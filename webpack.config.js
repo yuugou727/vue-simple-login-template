@@ -1,7 +1,8 @@
-var path = require('path')
-var webpack = require('webpack')
+const path = require('path')
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
+  mode: 'development',
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -26,7 +27,7 @@ module.exports = {
         }
       },
       {
-        test: /\.js$/,
+        test: /\.m?js$/,
         loader: 'babel-loader',
         exclude: /node_modules/
       },
@@ -39,11 +40,14 @@ module.exports = {
       }
     ]
   },
+  plugins: [
+    new VueLoaderPlugin(),
+  ],
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.runtime.esm.js'
     },
-    extensions: ['*', '.js', '.vue', '.json']
+    extensions: ['.mjs', '.js', '.vue', '.json']
   },
   devServer: {
     historyApiFallback: true,
@@ -53,11 +57,12 @@ module.exports = {
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
+  devtool: 'eval-source-map'
 }
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
+  module.exports.mode = 'production';
+  module.exports.devtool = 'source-map';
   // http://vue-loader.vuejs.org/en/workflow/production.html
   module.exports.plugins = (module.exports.plugins || []).concat([
     new webpack.DefinePlugin({
